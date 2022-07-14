@@ -6,17 +6,19 @@ let cliente = {
   platillo: [],
 };
 
-crearOrdenBtn.addEventListener("click", verificarFormulario);
+crearOrdenBtn.addEventListener("click", crearOrden);
 
-function verificarFormulario(e) {
-  const inputMesa = document.querySelector("#mesa").value;
-  const inputHora = document.querySelector("#hora").value;
-  const campoVacio = [inputMesa, inputHora].some((campo) => campo === "");
+function crearOrden(e) {
+  //Verificacion del formulario
+  const mesa = document.querySelector("#mesa").value;
+  const hora = document.querySelector("#hora").value;
+  const campoVacio = [mesa, hora].some((campo) => campo === "");
   if (campoVacio) {
     mostrarMensaje("Los campos son obligatorios");
     return;
   }
-  console.log("Los campos estan completos");
+  guardarCliente(mesa, hora);
+  mostrarSecciones();
 }
 
 function mostrarMensaje(texto) {
@@ -30,4 +32,16 @@ function mostrarMensaje(texto) {
       mensaje.remove();
     }, 3000);
   }
+}
+
+function guardarCliente(mesa, hora) {
+  cliente = { ...cliente, mesa, hora };
+  const modalFormulario = document.querySelector("#formulario");
+  const modalBootstrap = bootstrap.Modal.getInstance(modalFormulario);
+  modalBootstrap.hide();
+}
+
+function mostrarSecciones() {
+  const seccionesOcultas = document.querySelectorAll(".d-none");
+  seccionesOcultas.forEach((seccion) => seccion.classList.remove("d-none"));
 }
