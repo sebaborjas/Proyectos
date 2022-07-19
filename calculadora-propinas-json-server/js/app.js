@@ -3,7 +3,7 @@ const crearOrdenBtn = document.querySelector("#guardar-cliente");
 let cliente = {
   mesa: "",
   hora: "",
-  platillo: [],
+  pedido: [],
 };
 
 const categoriaMenuPlatos = {
@@ -91,9 +91,14 @@ function imprimirHTML(menu) {
     inputCantidad.type = "number";
     inputCantidad.min = 0;
     inputCantidad.value = 0;
-    inputCantidad.id = id;
+    inputCantidad.id = `producto-${id}`;
     inputCantidad.classList.add("form-control");
-    console.log(inputCantidad);
+
+    //Esta funcion se encarga de seguirle el rastro al imput de Cantidad
+    inputCantidad.onchange = function () {
+      const cantidad = parseInt(inputCantidad.value);
+      agregarPlato({ ...plato, cantidad });
+    };
 
     //Div para el input
     const inputDiv = document.createElement("div");
@@ -108,4 +113,171 @@ function imprimirHTML(menu) {
     row.appendChild(inputDiv);
     contenidoPlato.appendChild(row);
   });
+}
+
+function agregarPlato(producto) {
+  //Extraer pedido de los clientes
+  let { pedido } = cliente;
+  //Agregar producto al pedido
+  if (producto.cantidad > 0) {
+    //Chequeo si ya existe el producto para actualizar la cantidad
+    if (pedido.some((articulo) => articulo.id === producto.id)) {
+      //Actualizo la cantidad
+      const pedidoActualizado = pedido.map((articulo) => {
+        if (articulo.id === producto.id) {
+          articulo.cantidad = producto.cantidad;
+        }
+        return articulo;
+      });
+      cliente.pedido = [...pedidoActualizado];
+    } else {
+      //Agrego el producto
+      cliente.pedido = [...pedido, producto];
+    }
+  } else {
+    const resultado = pedido.filter((articulo) => articulo.id !== producto.id);
+    cliente.pedido = [...resultado];
+  }
+  limpiarHTML();
+  if (cliente.pedido.length) {
+    actualizarResumen();
+  } else {
+    mensajePedidoVacio();
+  }
+}
+
+function actualizarResumen() {
+  const contenidoResumen = document.querySelector("#resumen .contenido");
+  //Div para almacenar mostrar los datos
+  const datosResumen = document.createElement("div");
+  datosResumen.classList.add("col-md-6", "card", "shadow", "py-5", "px-3");
+
+  //
+  const mesa = document.createElement("p");
+  mesa.textContent = "Mesa: ";
+  mesa.classList.add("fw-bold");
+  const mesaSpan = document.createElement("span");
+  mesaSpan.textContent = cliente.mesa;
+  mesaSpan.classList.add("fw-normal");
+  mesa.appendChild(mesaSpan);
+
+  const hora = document.createElement("p");
+  hora.textContent = "Hora: ";
+  hora.classList.add("fw-bold");
+  const horaSpan = document.createElement("span");
+  horaSpan.textContent = cliente.hora;
+  horaSpan.classList.add("fw-normal");
+  hora.appendChild(horaSpan);
+
+  //Titulo de la seccion
+  const heading = document.createElement("h3");
+  heading.textContent = "Platos consumidos";
+  heading.classList.add("my-4", "text-center");
+
+  //Iterar sobre el array para mostrar platos y cantidades
+  const grupo = document.createElement("ul");
+  grupo.classList.add("list-group");
+  const { pedido } = cliente;
+  pedido.forEach((articulo) => {
+    const { nombre, cantidad, id, precio } = articulo;
+    const lista = document.createElement("li");
+    lista.classList.add("list-group-item");
+
+    //Nombre del articulo
+    const nombreElement = document.createElement("h4");
+    nombreElement.classList.add("my-4");
+    nombreElement.textContent = nombre;
+
+    //Cantidad del articulo
+    const cantidadElement = document.createElement("p");
+    cantidadElement.classList.add("fw-bold");
+    cantidadElement.textContent = "Cantidad: ";
+
+    const cantidadElementValor = document.createElement("span");
+    cantidadElementValor.classList.add("fw-normal");
+    cantidadElementValor.textContent = cantidad;
+
+    //Precio del articulo
+    const precioElement = document.createElement("p");
+    precioElement.classList.add("fw-bold");
+    precioElement.textContent = "Precio: ";
+
+    const precioElementValor = document.createElement("span");
+    precioElementValor.classList.add("fw-normal");
+    precioElementValor.textContent = `$${precio}`;
+
+    //Precio del subtotal
+    const subtotalElement = document.createElement("p");
+    subtotalElement.classList.add("fw-bold");
+    subtotalElement.textContent = "Subtotal: ";
+
+    const subtotalElementValor = document.createElement("span");
+    subtotalElementValor.classList.add("fw-normal");
+    subtotalElementValor.textContent = calcularSubTotal(cantidad, precio);
+
+    //Boton de eliminar
+    const btnEliminar = document.createElement("button");
+    btnEliminar.classList.add("btn", "btn-danger");
+    btnEliminar.textContent = "Eliminar del pedido";
+
+    //Funcion para elminar del pedido
+    btnEliminar.onclick = function () {
+      eliminarProducto(id);
+    };
+
+    cantidadElement.appendChild(cantidadElementValor);
+    precioElement.appendChild(precioElementValor);
+    subtotalElement.appendChild(subtotalElementValor);
+
+    lista.appendChild(nombreElement);
+    lista.appendChild(cantidadElement);
+    lista.appendChild(precioElement);
+    lista.appendChild(subtotalElement);
+    lista.appendChild(btnEliminar);
+
+    grupo.appendChild(lista);
+  });
+
+  datosResumen.appendChild(mesa);
+  datosResumen.appendChild(hora);
+  datosResumen.appendChild(heading);
+  datosResumen.appendChild(grupo);
+  contenidoResumen.appendChild(datosResumen);
+}
+
+function limpiarHTML() {
+  const contenidoResumen = document.querySelector("#resumen .contenido");
+  while (contenidoResumen.firstChild) {
+    contenidoResumen.removeChild(contenidoResumen.firstChild);
+  }
+}
+
+function calcularSubTotal(cantidad, precio) {
+  return `$${cantidad * precio}`;
+}
+
+function eliminarProducto(id) {
+  const { pedido } = cliente;
+  const resultado = pedido.filter((articulo) => articulo.id !== id);
+  cliente.pedido = [...resultado];
+  limpiarHTML();
+  if (cliente.pedido.length) {
+    actualizarResumen();
+  } else {
+    mensajePedidoVacio();
+  }
+
+  const productoEliminado = `#producto-${id}`;
+  const inputEliminado = document.querySelector(productoEliminado);
+  inputEliminado.value = 0;
+}
+
+function mensajePedidoVacio() {
+  const contenidoResumen = document.querySelector("#resumen .contenido");
+
+  const texto = document.createElement("p");
+  texto.classList.add("text-center");
+  texto.textContent = "Añade los elementos del pedido";
+
+  contenidoResumen.appendChild(texto);
 }
