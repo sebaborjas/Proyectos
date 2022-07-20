@@ -150,8 +150,10 @@ function actualizarResumen() {
   const contenidoResumen = document.querySelector("#resumen .contenido");
   //Div para almacenar mostrar los datos
   const datosResumen = document.createElement("div");
-  datosResumen.classList.add("col-md-6", "card", "shadow", "py-5", "px-3");
-
+  datosResumen.classList.add("col-md-6");
+  //divDatosResumen es para que corregir posocionamiento del grid de bootstrap
+  const divDatosResumen = document.createElement("div");
+  divDatosResumen.classList.add("card", "shadow", "py-3", "px-3");
   //
   const mesa = document.createElement("p");
   mesa.textContent = "Mesa: ";
@@ -160,7 +162,7 @@ function actualizarResumen() {
   mesaSpan.textContent = cliente.mesa;
   mesaSpan.classList.add("fw-normal");
   mesa.appendChild(mesaSpan);
-
+  //
   const hora = document.createElement("p");
   hora.textContent = "Hora: ";
   hora.classList.add("fw-bold");
@@ -172,7 +174,7 @@ function actualizarResumen() {
   //Titulo de la seccion
   const heading = document.createElement("h3");
   heading.textContent = "Platos consumidos";
-  heading.classList.add("my-4", "text-center");
+  heading.classList.add("my-2", "text-center");
 
   //Iterar sobre el array para mostrar platos y cantidades
   const grupo = document.createElement("ul");
@@ -188,7 +190,7 @@ function actualizarResumen() {
     nombreElement.classList.add("my-4");
     nombreElement.textContent = nombre;
 
-    //Cantidad del articulo
+    //Cantidad de articulos
     const cantidadElement = document.createElement("p");
     cantidadElement.classList.add("fw-bold");
     cantidadElement.textContent = "Cantidad: ";
@@ -197,7 +199,7 @@ function actualizarResumen() {
     cantidadElementValor.classList.add("fw-normal");
     cantidadElementValor.textContent = cantidad;
 
-    //Precio del articulo
+    //Precio del palto
     const precioElement = document.createElement("p");
     precioElement.classList.add("fw-bold");
     precioElement.textContent = "Precio: ";
@@ -206,7 +208,7 @@ function actualizarResumen() {
     precioElementValor.classList.add("fw-normal");
     precioElementValor.textContent = `$${precio}`;
 
-    //Precio del subtotal
+    //Subtotal de los platos
     const subtotalElement = document.createElement("p");
     subtotalElement.classList.add("fw-bold");
     subtotalElement.textContent = "Subtotal: ";
@@ -225,24 +227,33 @@ function actualizarResumen() {
       eliminarProducto(id);
     };
 
+    //Anidamineto de nombre: valor
     cantidadElement.appendChild(cantidadElementValor);
     precioElement.appendChild(precioElementValor);
     subtotalElement.appendChild(subtotalElementValor);
 
+    //Anidando nombre: valor a una lista
     lista.appendChild(nombreElement);
     lista.appendChild(cantidadElement);
     lista.appendChild(precioElement);
     lista.appendChild(subtotalElement);
     lista.appendChild(btnEliminar);
 
+    //Agrupo lista
     grupo.appendChild(lista);
   });
+  //Agrupacion elementos de formulario de platos consumidos
+  divDatosResumen.appendChild(heading);
+  divDatosResumen.appendChild(mesa);
+  divDatosResumen.appendChild(hora);
+  divDatosResumen.appendChild(grupo);
+  datosResumen.appendChild(divDatosResumen);
 
-  datosResumen.appendChild(mesa);
-  datosResumen.appendChild(hora);
-  datosResumen.appendChild(heading);
-  datosResumen.appendChild(grupo);
+  //Agrego el fomulario a resumen
   contenidoResumen.appendChild(datosResumen);
+
+  //Ahora debo crear el formulario de pago y de propinas
+  formularioPropinas();
 }
 
 function limpiarHTML() {
@@ -280,4 +291,23 @@ function mensajePedidoVacio() {
   texto.textContent = "Añade los elementos del pedido";
 
   contenidoResumen.appendChild(texto);
+}
+
+function formularioPropinas() {
+  //Creando formulario
+  const contenido = document.querySelector("#resumen .contenido");
+  //
+  const formulario = document.createElement("div");
+  formulario.classList.add("col-md-6", "formulario");
+  //
+  const divFormulario = document.createElement("div");
+  divFormulario.classList.add("card", "shadow", "py-3", "px-3");
+  //
+  const header = document.createElement("h3");
+  header.textContent = "Propinas";
+  header.classList.add("my-2", "text-center");
+  //
+  divFormulario.appendChild(header);
+  formulario.appendChild(divFormulario);
+  contenido.appendChild(formulario);
 }
