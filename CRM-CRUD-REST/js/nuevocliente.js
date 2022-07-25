@@ -5,6 +5,7 @@ Validar los campos del formulario{
     -Si se valida correctamente{
         -Guardar datos
         -Guardar datos en db.json
+        -Mostrarlos en pantalla
     }
 }
 
@@ -12,6 +13,7 @@ Validar los campos del formulario{
 */
 
 import { mostrarAlerta } from "./funciones.js";
+import { nuevoCliente } from "./API.js";
 
 (function () {
   const formulario = document.querySelector("#formulario");
@@ -36,6 +38,6 @@ import { mostrarAlerta } from "./funciones.js";
       mostrarAlerta("Todos los campos son obligatorios");
       return;
     }
-    console.log("Se han validado todos los campos correctamente");
+    nuevoCliente(cliente);
   }
 })();
