@@ -12,23 +12,26 @@ const regularExpressionMail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 //ESCUCHANDO EVENTOS
 eventListeners();
 function eventListeners() {
-  document.addEventListener("DOMContentLoaded", iniciarApp);
+  document.addEventListener("DOMContentLoaded", desabilitarBtn);
 
-  email.addEventListener("blur", validarFormulario);
-  asunto.addEventListener("blur", validarFormulario);
-  mensaje.addEventListener("blur", validarFormulario);
-  formulario.addEventListener("submit", enviarFormulario);
+  email.addEventListener("keyup", validarCampos);
+
+  asunto.addEventListener("keyup", validarCampos);
+
+  mensaje.addEventListener("keyup", validarCampos);
+
+  formulario.addEventListener("submit", validarFormulario);
   btnResetForm.addEventListener("click", resetFormulario);
 }
 
 //FUNCIONAMIENTO DE LA VALIDACION
-iniciarApp();
-function iniciarApp() {
+desabilitarBtn();
+function desabilitarBtn() {
   btnEnviar.disabled = true;
   btnEnviar.classList.add("cursor-not-allowed", "opacity-50");
 }
 
-function validarFormulario(evento) {
+function validarCampos(evento) {
   if (evento.target.value.length > 0) {
     const error = document.querySelector("p.error");
     if (error !== null) {
@@ -42,10 +45,12 @@ function validarFormulario(evento) {
 
   //VALIDACION DEL MAIL CON EXPRESION REGULAR
   if (evento.target.type === "email") {
-    if (regularExpressionMail.test(evento.target.value)) {
-    } else {
+    if (!regularExpressionMail.test(evento.target.value)) {
       campoRojo(evento);
       mostrarError("Email no valido");
+    } else {
+      campoVerde(evento);
+      //mostrarError("Email no valido");
     }
   }
 
@@ -56,7 +61,16 @@ function validarFormulario(evento) {
     mensaje.value != ""
   ) {
     habilitarEnvio();
+  } else {
+    desabilitarBtn();
   }
+}
+
+function validarFormulario(evento) {
+  if (email.value > 0 && asunto.value > 0 && mensaje.value > 0) {
+  }
+
+  enviarFormulario(evento);
 }
 
 function mostrarError(mensaje) {
@@ -79,31 +93,30 @@ function mostrarError(mensaje) {
 }
 
 function campoVerde(campo) {
-  if (campo.target.classList.contains("border-red-500")) {
-    campo.target.classList.remove("border-red-500");
-    campo.target.classList.add("border-green-500");
+  if (campo.target.classList.contains("border-red-500", "bg-red-200")) {
+    campo.target.classList.remove("border-red-500", "bg-red-200");
+    campo.target.classList.add("border-green-500", "bg-green-200");
   } else {
-    campo.target.classList.add("border-green-500");
+    campo.target.classList.add("border-green-500", "bg-green-200");
   }
 }
 
 function campoRojo(campo) {
-  if (campo.target.classList.contains("border-green-500")) {
-    campo.target.classList.remove("border-green-500");
-    campo.target.classList.add("border-red-500");
+  if (campo.target.classList.contains("border-green-500", "bg-green-200")) {
+    campo.target.classList.remove("border-green-500", "bg-green-200");
+    campo.target.classList.add("border-red-500", "bg-red-200");
   } else {
-    campo.target.classList.add("border-red-500");
+    campo.target.classList.add("border-red-500", "bg-red-200");
   }
 }
 
 function resetCampos() {
-  console.log("camposreset");
-  email.classList.remove("border-green-500");
-  email.classList.remove("border-red-500");
-  asunto.classList.remove("border-green-500");
-  asunto.classList.remove("border-red-500");
-  mensaje.classList.remove("border-green-500");
-  mensaje.classList.remove("border-red-500");
+  email.classList.remove("border-green-500", "bg-green-200");
+  email.classList.remove("border-red-500", "bg-red-200");
+  asunto.classList.remove("border-green-500", "bg-green-200");
+  asunto.classList.remove("border-red-500", "bg-red-200");
+  mensaje.classList.remove("border-green-500", "bg-green-200");
+  mensaje.classList.remove("border-red-500", "bg-red-200");
   const errores = document.querySelectorAll(".error");
   if (errores.length > 0) {
     formulario.removeChild(formulario.lastChild);
@@ -116,7 +129,6 @@ function habilitarEnvio() {
 }
 
 function enviarFormulario(evento) {
-  console.log("Inicio");
   evento.preventDefault();
   const spinner = document.querySelector("#spinner");
   spinner.style.display = "flex";
@@ -136,22 +148,20 @@ function enviarFormulario(evento) {
       "font-bold",
       "upper-case"
     );
-    console.log("Holaaaa");
     formulario.insertBefore(msj, spinner);
     setTimeout(() => {
       msj.remove();
       resetCampos();
       formulario.reset();
-      iniciarApp();
+      desabilitarBtn();
     }, 3000);
   }, 3000);
 }
 
 function resetFormulario(e) {
   e.preventDefault();
-  console.log("desde reset");
 
   formulario.reset();
   resetCampos();
-  iniciarApp();
+  desabilitarBtn();
 }
