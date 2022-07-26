@@ -8,7 +8,7 @@ Filtrado: ---> https://effulgent-faun-24ecd0.netlify.app <---
 
 Carrito: ---> https://vocal-clafoutis-2bec20.netlify.app <---
 
-Enviar-Mail: ---> https://cool-bunny-b6afef.netlify.app <---
+Enviar-Mail: ---> https://friendly-gnome-95a2f8.netlify.app <---
 
 Local storage tweets: ---> https://magnificent-truffle-aea428.netlify.app <---
 
