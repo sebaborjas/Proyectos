@@ -1,7 +1,6 @@
 # Proyectos-JS-Vanilla
 
-En estos proyectos, solo he añadido funcionalidades con JavaScript sin uso de ningun framework. No he trabajado en la creacion de la estructura y estilos de las paginas. Los pyoyectos estan subidos a Netlify para probarlos.
-
+Estos proyectos son el resultado de mis primeros en el desarrollo web.
 Enlaces:
 
 Filtrado: ---> https://effulgent-faun-24ecd0.netlify.app <---
